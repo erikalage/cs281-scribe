@@ -284,5 +284,34 @@ The E-step, we find $q_{nk}$.
 
 and we can minimize the KL divergence term by setting $q_{nk} = p(z_n | x_n, \pi,\mu)$ as the same distribution.
 
+\subsection{Problems and Answers}
+
+\subsubsection{Comparing a Mixture Model and Hurdle Model}
+
+Recall the hurdle model in Homework 2, Problem 2.  This allowed us to account for a bimodal distribution of count data with one mode on 0, and one mode with a Poisson distribution.  Alternatively, we could model this data with a mixture model.  
+
+\textbf{This is the hurdle model included in the previous problem set}:
+\begin{align*}
+P(y = 0\ |\ x) & = 1- \pi\\
+P(y = j\ |\ x) & = \pi \frac{f(j\ |\ \mathbf{x})}{1 - f(0\ | \ \mathbf{x})},\ j=1,2,...
+\end{align*}
+One choice of parameterization is to use a logistic regression model
+for $\pi$: $$\pi = \sigma(\mathbf{x}^\top \mathbf{w}_1)$$ and use a Poisson GLM for $f$x with mean parameters $\lambda$ (see
+Murphy 9.3): $$\lambda = \exp(\mathbf{x}^\top \mathbf{w}_2) $$
+
+\textbf{Mixture Model}:
+Consider a mixture of Poisson GLMS with 2 latent classes: z = 0 and z = 1.  The Poisson GLM used when z = 0 described the people who rarely go to the gym.  The Poisson GLM used when z = 1 describes the people who go to the gym frequently.
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Question}: Intuitively, why might modeling this with a latent variable be useful?\\ 
+\textbf{Answer}: The hypothesis is that there are 2 groups of people in this dataset: one group of gym goers who randomly miss the gym some weeks, and another set of non-gym goers who randomly go to the gym some weeks.  A latent variable model could distinguish these 2 groups and learn a Poisson GLM for each of them.  This allows us to better model the random weeks where gym-goers miss the gym, and non gym-goers hit the gym.  This is also a particularly useful framework in the case where we know that there are 2 groups of people, but we don't know the gym-going habits of each group.  E.g. if group one goes to the gym once most weeks instead of zero times, we wouldn't be able to model it as a hurdle model unless we knew that ahead of time.
+\item \textbf{Question}: Write the probability of y if we parameterize this with a mixture of Poisson GLMs determined by a latent class indicator, z.\\ 
+\textbf{Answer}: $P(y = j\ |\ x , z ) \sim Poi( \exp(\mathbf{x}^\top \mathbf{w}_{z}) )$ 
+\item \textbf{Question}: How would you learn the parameters with E.M.?\\ 
+\textbf{Answer}: Initialize zs and ws randomly\\
+Expectation step: $z = argmax_k P(y=j|x,z=k)$\\
+Maximization step: $w_z = argmax_{w_z} P(y=j|x,z)$\\
+Iterate until convergence.
+\end{enumerate}
 
 \end{document}
