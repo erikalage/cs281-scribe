@@ -306,11 +306,13 @@ Consider a mixture of Poisson GLMS with 2 latent classes: z = 0 and z = 1.  The 
 \item \textbf{Question}: Intuitively, why might modeling this with a latent variable be useful?\\ 
 \textbf{Answer}: The hypothesis is that there are 2 groups of people in this dataset: one group of gym goers who randomly miss the gym some weeks, and another set of non-gym goers who randomly go to the gym some weeks.  A latent variable model could distinguish these 2 groups and learn a Poisson GLM for each of them.  This allows us to better model the random weeks where gym-goers miss the gym, and non gym-goers hit the gym.  This is also a particularly useful framework in the case where we know that there are 2 groups of people, but we don't know the gym-going habits of each group.  E.g. if group one goes to the gym once most weeks instead of zero times, we wouldn't be able to model it as a hurdle model unless we knew that ahead of time.
 \item \textbf{Question}: Write the probability of y if we parameterize this with a mixture of Poisson GLMs determined by a latent class indicator, z.\\ 
-\textbf{Answer}: $P(y = j\ |\ x , z ) \sim Poi( \exp(\mathbf{x}^\top \mathbf{w}_{z}) )$ 
+\textbf{Answer}: $z \sim Cat( \pi )$\\
+$P(y = j\ |\ x , z ) \sim Poi( \exp(\mathbf{x}^\top \mathbf{w}_{z}) )$ 
 \item \textbf{Question}: How would you learn the parameters with E.M.?\\ 
 \textbf{Answer}: Initialize zs and ws randomly\\
-Expectation step: $z = argmax_k P(y=j|x,z=k)$\\
+Expectation step: $z = E[P(y=j|x,z=k)]$\\
 Maximization step: $w_z = argmax_{w_z} P(y=j|x,z)$\\
+$\pi = argmax_{\pi} P(z)$\\
 Iterate until convergence.
 \end{enumerate}
 
